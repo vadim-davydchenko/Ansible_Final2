@@ -1,0 +1,27 @@
+- name: PHP | Install software-properties-common
+  ansible.builtin.apt:
+    name: software-properties-common
+    state: present
+    update_cache: true
+
+- name: PHP | Install php packages
+  ansible.builtin.apt:
+    name: "php{{ php_version }}-{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - fpm
+    - mysql
+    - mysqli
+    - gd
+    - curl
+    - xml
+    - zip
+    - mbstring
+    - intl
+
+- name: PHP | Ensure php-fpm is running
+  ansible.builtin.service:
+    name: "php{{ php_version }}-fpm"
+    state: started
+    enabled: true

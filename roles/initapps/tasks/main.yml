@@ -1,0 +1,38 @@
+- name: INITAPPS | Create working directory joomla
+  ansible.builtin.file:
+    path: "{{ initapps_joomla_dir }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: '0755'
+
+- name: INITAPPS | Delete default in sites-enabled config nginx
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: INITAPPS | Delete default in sites-available config nginx
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available/default
+    state: absent
+
+- name: INITAPPS | Copy nginx config
+  ansible.builtin.template:
+    src: templates/joomla.conf.j2
+    dest: /etc/nginx/sites-available/joomla.conf
+    mode: '0644'
+
+- name: INITAPPS | Create symlink nginx config
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/joomla.conf
+    dest: /etc/nginx/sites-enabled/joomla.conf
+    state: link
+  notify:
+    - Restart nginx
+
+- name: INITAPPS | Test nginx config
+  ansible.builtin.command:
+    cmd: nginx -t
+  register: nginx_test_result
+  changed_when: false
+  failed_when: nginx_test_result.rc != 0

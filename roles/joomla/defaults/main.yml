@@ -1,0 +1,4 @@
+joomla_url: "https://downloads.joomla.org/cms/joomla"
+joomla_major_version: "5"
+joomla_package_version: "5-1-4"
+joomla_dir: "/var/www/sites/joomla"

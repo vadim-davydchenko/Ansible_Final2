@@ -1,0 +1,8 @@
+all:
+  children:
+    webservers:
+      hosts:
+        web01:
+          ansible_host: 10.129.0.3
+          ansible_user: user
+          ansible_password: okgmrsv

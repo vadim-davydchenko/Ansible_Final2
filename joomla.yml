@@ -1,0 +1,10 @@
+- name: Install LEMP and joomla
+  hosts: all
+  become: true
+
+  roles:
+    - nginx
+    - php
+    - mysql
+    - initapps
+    - joomla

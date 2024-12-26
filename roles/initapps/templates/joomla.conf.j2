@@ -1,0 +1,38 @@
+server {
+  listen 80;
+    server_name _;
+    server_name_in_redirect off;
+
+    access_log /var/log/nginx/localhost.access_log;
+    error_log /var/log/nginx/localhost.error_log info;
+
+    root "{{ initapps_joomla_dir }}";
+    index index.php;
+
+    # Support API
+    location /api/ {
+	try_files $uri $uri/ /api/index.php?$args;
+    }
+
+    # Support Clean (aka Search Engine Friendly) URLs
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    # add global x-content-type-options header
+    add_header X-Content-Type-Options nosniff;
+
+    # deny running scripts inside writable directories
+    location ~* /(images|cache|media|logs|tmp)/.*\.(php|pl|py|jsp|asp|sh|cgi)$ {
+        return 403;
+        error_page 403 /403_error.html;
+    }
+
+    location ~ .php$ {
+      include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+}
